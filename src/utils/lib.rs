@@ -127,7 +127,6 @@ pub fn control_extension(file: &str, ext: Extension)
     }
 }
 
-
 pub fn show_size_file(repertory:&str)
 {
     let path = Path::new(repertory);
@@ -160,5 +159,95 @@ pub fn show_size_file(repertory:&str)
     else 
     {
         println!("❌ Impossible de lancer show_size_file.");
+    }
+}
+
+pub fn remove_file_directory(file_directory:&str)
+{
+    let path = Path::new(file_directory);
+    if path.exists()
+    {
+        if path.is_file()
+        {
+                match fs::remove_file(path)
+                {
+                    Ok(_) => println!("Fichier supprimé: {}", file_directory),
+                    Err(e) => println!("Erreur de suppression du fichier {}: {}", file_directory, e),
+                }
+        }
+        else if path.is_dir()  
+        {
+            match fs::remove_dir_all(path)
+            {
+                Ok(_) => println!("Dossier supprimé: {}", file_directory),
+                Err(e) => println!("Erreur de suppression du dossier {}: {}", file_directory, e),
+            }
+        }
+        else  
+        {
+            println!("Ce n'est ni un dossier ni un fichier.");    
+        }
+    }
+    else 
+    {
+        println!("Ce chemin de file/dossier n'existe pas.");
+    }
+}
+
+//  fct pas encore test mais normalement ok.
+pub fn copy_file(file:&str, dest:&str) 
+{
+    let src_path = Path::new(file);
+    let dest_path = Path::new(dest);
+
+    if src_path.is_file()
+    {
+        match fs::copy(src_path, dest_path) 
+        {
+            Ok(_) => println!("Copie effectuer avec succes."),
+            Err(e) => println!("Erreur lors de la copie: {}", e),
+        }
+    }
+    else 
+    {
+        println!("Le fichier source {} n'existe pas ou n'est pas un fichier.", file);    
+    }
+}
+
+pub fn copy_repertory(source: &str, destination: &str) 
+{
+    let source_path = Path::new(source);
+    let destination_path = Path::new(destination);
+
+    if source_path.is_dir() 
+    {
+        if let Err(e) = fs::create_dir_all(destination_path) 
+        {
+            println!("❌ Impossible de créer le dossier {}: {}", destination, e);
+            return;
+        }
+
+        for entry in fs::read_dir(source_path).expect("Impossible de lire le dossier") 
+        {
+            if let Ok(entry) = entry {
+                let source_file = entry.path();
+                let dest_file = destination_path.join(entry.file_name());
+
+                if source_file.is_file() 
+                {
+                    copy_file(source_file.to_str().unwrap(), dest_file.to_str().unwrap());
+                } 
+                else if source_file.is_dir() 
+                {
+                    copy_repertory(source_file.to_str().unwrap(), dest_file.to_str().unwrap());
+                }
+            }
+        }
+
+        println!("✅ Dossier copié de {} vers {}", source, destination);
+    } 
+    else 
+    {
+        println!("⚠️ Le dossier source {} n'existe pas.", source);
     }
 }
