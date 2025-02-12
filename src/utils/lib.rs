@@ -126,3 +126,39 @@ pub fn control_extension(file: &str, ext: Extension)
         None => println!("Le fichier n'a pas d'extension ❌"),
     }
 }
+
+
+pub fn show_size_file(repertory:&str)
+{
+    let path = Path::new(repertory);
+    if let Ok(entries) = fs::read_dir(path)
+    {
+        for entry in entries
+        {
+            if let Ok(entry) = entry
+            {
+                let path_file = entry.path();
+                if let Ok(metadata) = fs::metadata(&&path_file)
+                {
+                    let size = metadata.len();
+                    if metadata.is_file()
+                    {
+                        println!("La taille du fichier : {} - {} octets", path_file.display(), size);
+                    }
+                    else if metadata.is_dir()
+                    {
+                        println!("La taille du dossier : {} - {} octets", path_file.display(), size);
+                    }
+                    else
+                    {
+                        println!(" Impossible de récupérer la taille de {}", path_file.display());
+                    }
+                }
+            }
+        }
+    }
+    else 
+    {
+        println!("❌ Impossible de lancer show_size_file.");
+    }
+}
