@@ -251,3 +251,22 @@ pub fn copy_repertory(source: &str, destination: &str)
         println!("⚠️ Le dossier source {} n'existe pas.", source);
     }
 }
+
+
+pub fn create_dir(filename:&str)
+{
+    let path = Path::new(filename);
+
+    if !path.exists()
+    {
+        match fs::create_dir(path)
+        {
+            Ok(_) => println!("Dossier {} cree avec succes ", filename),
+            Err(e) => println!("Erreur a la creation {}", e),
+        }
+    }
+    else 
+    {
+        println!("Le Dossier {} existe deja.", filename);
+    }
+}
