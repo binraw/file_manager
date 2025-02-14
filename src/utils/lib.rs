@@ -1,6 +1,7 @@
 
 use std::fs::{self};
 use std::path::{Path, PathBuf};
+use std::io;
 
 #[derive(Debug, PartialEq)]
 pub enum Extension 
@@ -23,9 +24,9 @@ pub fn move_file(file: &str, dossier: &str)
     fs::rename(file, &file_destination).expect("Impossible");
 }
 
-pub fn algo_range() 
+pub fn algo_range(path:&str) 
 {
-    let path = "./";
+    // let path = "./";
     if let Ok(entries) = fs::read_dir(path)
     {
         for entry in entries
@@ -268,5 +269,208 @@ pub fn create_dir(filename:&str)
     else 
     {
         println!("Le Dossier {} existe deja.", filename);
+    }
+}
+
+pub fn preamble()
+{
+    println!("Veuillez choisir l'action voulu:");
+    println!("Pour ranger tout les fichiers grace a leurs extensions tapez: 1 ");
+    println!("Pour supprimer un dossier ou un fichier tapez: 2");
+    println!("Pour voir la taille de tout les fichiers/dossiers tapez: 3");
+    println!("Pour copier un fichier tapez: 4");
+    println!("Pour copier un dossier tapez: 5");
+    println!("Pour supprimer un dossier ou un fichier tapez: 6");
+    println!("Pour créé un dossier tapez: 7");
+}
+
+pub fn choose_one()
+{
+    println!("Vous venez de choisir de ranger tout les fichiers pour validez tapez de nouveau: 1");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "1"
+    {
+        println!("indiquez l'endroit dans votre ordinateur que vous voulez ranger (sachant que si vous voulez rangez le dossier actuel indiquez : './' ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        algo_range(action);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_two()
+{
+    println!("Vous venez de choisir l'action qui permet de supprimez un dossier/fichier pour validez tapez de nouveau: 2");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "2"
+    {
+        println!("indiquez le nom du dossier ou fichier a supprimer (son chemin): ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        remove_file_directory(action);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_three()
+{
+    println!("Vous venez de choisir l'action qui permet de voir toutes les infos des fichiers/dossiers pour validez tapez de nouveau: 3");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "3"
+    {
+        println!("indiquez le nom du dossier dans lequel vous voulez toutes les infos: ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        show_size_file(action);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_four()
+{
+    println!("Vous venez de choisir l'action qui permet de copier un fichier pour validez tapez de nouveau: 4");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "4"
+    {
+        println!("Premierement indiquez le nom du fichier a copier: ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        println!("Maintenant indiquez le lieu (chemin) ou vous voulez le copier:");
+        let mut path = String::new();
+        io::stdin().read_line(&mut path).expect("Erreur de lecture");
+        let path = path.trim();
+        copy_file(action, path);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_five()
+{
+    println!("Vous venez de choisir l'action qui permet de copier un dossier pour validez tapez de nouveau: 5");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "5"
+    {
+        println!("Premierement indiquez le nom du dossier a copier: ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        println!("Maintenant indiquez le lieu (chemin) ou vous voulez le copier:");
+        let mut path = String::new();
+        io::stdin().read_line(&mut path).expect("Erreur de lecture");
+        let path = path.trim();
+        copy_repertory(action, path);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_six()
+{
+    println!("Vous venez de choisir l'action qui permet de SUPPRIMER un FICHIER ou un DOSSIER pour validez tapez de nouveau: 6");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "6"
+    {
+        println!("Premierement indiquez le nom du dossier ou fichier a supprimer: ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        remove_file_directory(action);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn choose_seven()
+{
+    println!("Vous venez de choisir l'action qui permet de creer un dossier pour validez tapez de nouveau: 7");
+    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+    if valid == "6"
+    {
+        println!("Premierement indiquez le nom du dossier a creer: ");
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        create_dir(action);
+    }
+    else {
+        return;
+    }
+}
+
+pub fn routine(param: &str) -> u32
+{
+    if param == "1"
+    {
+        choose_one();
+        return 0;
+    }
+    else if param == "2"
+    {
+        choose_two();
+        return 0;
+    }
+    else if param == "3" 
+    {
+        choose_three();
+        return 0;
+    }
+    else if  param == "4"
+    {
+        choose_four();
+        return 0;
+    }
+    else if param == "5" 
+    {
+        choose_five();
+        return 0;
+    }
+    else if param == "6" 
+    {
+        choose_six();
+        return 0;
+    }
+    else if param == "7" 
+    {
+        choose_seven();
+        return 0;
+    }
+    else 
+    {
+        return 1;    
     }
 }

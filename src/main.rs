@@ -1,13 +1,22 @@
 
-use utils::lib::{algo_range, remove_file_directory, show_size_file};
+use utils::lib::{preamble, routine};
 mod utils;
+use std::io;
 
 fn main() 
 {
-    algo_range();
-    show_size_file(".");
-    // remove_file_directory("file.img");
-    // remove_file_directory("bababra.img");
-    // remove_file_directory("test");
+    let mut param = String::new();
+
+    loop
+    {
+        preamble();
+        param.clear();
+        io::stdin().read_line(&mut param).expect("Erreur de lecture");
+        let param = param.trim();
+        if routine(param) == 1
+        {
+            break;
+        }
+    }
 }
 
