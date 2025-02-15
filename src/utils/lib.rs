@@ -90,19 +90,6 @@ impl Extension
     }
 }
 
-impl Extension 
-{
-    pub fn all() -> Vec<Extension> 
-    {
-        vec![
-            Extension::Png,
-            Extension::Pdf,
-            Extension::Txt,
-            Extension::Img,
-        ]
-    }
-}
-
 pub fn control_extension(file: &str, ext: Extension)
 {
     let path = Path::new(file);
@@ -280,68 +267,7 @@ pub fn preamble()
     println!("Pour voir la taille de tout les fichiers/dossiers tapez: 3");
     println!("Pour copier un fichier tapez: 4");
     println!("Pour copier un dossier tapez: 5");
-    println!("Pour supprimer un dossier ou un fichier tapez: 6");
-    println!("Pour créé un dossier tapez: 7");
-}
-
-pub fn choose_one()
-{
-    println!("Vous venez de choisir de ranger tout les fichiers pour validez tapez de nouveau: 1");
-    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
-    let mut valid = String::new();
-    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
-    let valid = valid.trim();
-    if valid == "1"
-    {
-        println!("indiquez l'endroit dans votre ordinateur que vous voulez ranger (sachant que si vous voulez rangez le dossier actuel indiquez : './' ");
-        let mut action = String::new();
-        io::stdin().read_line(&mut action).expect("Erreur de lecture");
-        let action = action.trim();
-        algo_range(action);
-    }
-    else {
-        return;
-    }
-}
-
-pub fn choose_two()
-{
-    println!("Vous venez de choisir l'action qui permet de supprimez un dossier/fichier pour validez tapez de nouveau: 2");
-    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
-    let mut valid = String::new();
-    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
-    let valid = valid.trim();
-    if valid == "2"
-    {
-        println!("indiquez le nom du dossier ou fichier a supprimer (son chemin): ");
-        let mut action = String::new();
-        io::stdin().read_line(&mut action).expect("Erreur de lecture");
-        let action = action.trim();
-        remove_file_directory(action);
-    }
-    else {
-        return;
-    }
-}
-
-pub fn choose_three()
-{
-    println!("Vous venez de choisir l'action qui permet de voir toutes les infos des fichiers/dossiers pour validez tapez de nouveau: 3");
-    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
-    let mut valid = String::new();
-    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
-    let valid = valid.trim();
-    if valid == "3"
-    {
-        println!("indiquez le nom du dossier dans lequel vous voulez toutes les infos: ");
-        let mut action = String::new();
-        io::stdin().read_line(&mut action).expect("Erreur de lecture");
-        let action = action.trim();
-        show_size_file(action);
-    }
-    else {
-        return;
-    }
+    println!("Pour créé un dossier tapez: 6");
 }
 
 pub fn choose_four()
@@ -392,29 +318,10 @@ pub fn choose_five()
     }
 }
 
+
 pub fn choose_six()
 {
-    println!("Vous venez de choisir l'action qui permet de SUPPRIMER un FICHIER ou un DOSSIER pour validez tapez de nouveau: 6");
-    println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
-    let mut valid = String::new();
-    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
-    let valid = valid.trim();
-    if valid == "6"
-    {
-        println!("Premierement indiquez le nom du dossier ou fichier a supprimer: ");
-        let mut action = String::new();
-        io::stdin().read_line(&mut action).expect("Erreur de lecture");
-        let action = action.trim();
-        remove_file_directory(action);
-    }
-    else {
-        return;
-    }
-}
-
-pub fn choose_seven()
-{
-    println!("Vous venez de choisir l'action qui permet de creer un dossier pour validez tapez de nouveau: 7");
+    println!("Vous venez de choisir l'action qui permet de creer un dossier pour validez tapez de nouveau: 6");
     println!("Si ce n'est pas l'action voulu pour revenir en arrière tapez sur la touche de votre choix:");
     let mut valid = String::new();
     io::stdin().read_line(&mut valid).expect("Erreur de lecture");
@@ -436,17 +343,26 @@ pub fn routine(param: &str) -> u32
 {
     if param == "1"
     {
-        choose_one();
+        choose_action("1",
+         "Vous avez choisi de ranger tous les fichiers. Tapez de nouveau: 1",
+          "Indiquez l'endroit à ranger (ex: './')",
+           |path| algo_range(path));
         return 0;
     }
     else if param == "2"
     {
-        choose_two();
+        choose_action("2",
+         "Vous avez choisi de supprimer un fichier/dossier. Tapez de nouveau: 2",
+         "Indiquez le fichier/dossier a supprimer",
+         |path| remove_file_directory(path));
         return 0;
     }
     else if param == "3" 
     {
-        choose_three();
+        choose_action("3",
+        "Vous venez de choisir l'action qui permet de voir toutes les infos des fichiers/dossiers pour validez tapez de nouveau: 3",
+        "indiquez le nom du dossier dans lequel vous voulez toutes les infos",
+        |path| show_size_file(path));
         return 0;
     }
     else if  param == "4"
@@ -459,18 +375,35 @@ pub fn routine(param: &str) -> u32
         choose_five();
         return 0;
     }
-    else if param == "6" 
-    {
-        choose_six();
-        return 0;
-    }
     else if param == "7" 
     {
-        choose_seven();
+        choose_six();
         return 0;
     }
     else 
     {
         return 1;    
+    }
+}
+
+
+pub fn choose_action<F>(validation_choice: &str, instruction: &str, action_prompt: &str, action_function: F)
+where
+    F: Fn(&str),  // Ici, on restreint F pour être une fonction/closure qui accepte un &str
+{
+    println!("{}", instruction);
+    println!("Si ce n'est pas l'action voulue, tapez sur la touche de votre choix:");
+
+    let mut valid = String::new();
+    io::stdin().read_line(&mut valid).expect("Erreur de lecture");
+    let valid = valid.trim();
+
+    if valid == validation_choice {
+        println!("{}", action_prompt);
+        
+        let mut action = String::new();
+        io::stdin().read_line(&mut action).expect("Erreur de lecture");
+        let action = action.trim();
+        action_function(action); 
     }
 }

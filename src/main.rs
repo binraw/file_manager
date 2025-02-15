@@ -6,7 +6,6 @@ use std::io;
 fn main() 
 {
     let mut param = String::new();
-
     loop
     {
         preamble();
